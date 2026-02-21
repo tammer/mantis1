@@ -1,10 +1,14 @@
 import { useState } from 'react';
 
 // material-ui
+import Button from '@mui/material/Button';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 
 // project imports
 import MainCard from 'components/MainCard';
@@ -21,23 +25,61 @@ function TabPanel({ children, value, index, ...other }) {
 
 export default function AddNewsletter() {
   const [value, setValue] = useState(0);
+  const [url, setUrl] = useState('');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const handleSubmitByUrl = (e) => {
+    e.preventDefault();
+    // TODO: submit URL
+  };
+
+  const isValidUrl = (str) => {
+    const trimmed = str?.trim() || '';
+    if (!trimmed) return false;
+    try {
+      const parsed = new URL(trimmed);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
+  const urlValid = isValidUrl(url);
 
   return (
     <Box sx={{ maxWidth: 720 }}>
       <MainCard title="Add Newsletter">
         <Tabs value={value} onChange={handleChange} aria-label="add newsletter methods">
           <Tab label="By URL" id="add-newsletter-tab-0" aria-controls="add-newsletter-tabpanel-0" />
-          <Tab label="Manual Entry" id="add-newsletter-tab-1" aria-controls="add-newsletter-tabpanel-1" />
-          <Tab label="Import" id="add-newsletter-tab-2" aria-controls="add-newsletter-tabpanel-2" />
+          <Tab label="From Recommendations" id="add-newsletter-tab-1" aria-controls="add-newsletter-tabpanel-1" />
+          <Tab label="Load Someone's list" id="add-newsletter-tab-2" aria-controls="add-newsletter-tabpanel-2" />
         </Tabs>
         <TabPanel value={value} index={0}>
-          <Typography variant="body1" color="text.secondary">
-            Add a newsletter by entering its URL. Form and functionality can be added here.
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            Enter the URL of the newsletter you want to add.
           </Typography>
+          <Stack component="form" onSubmit={handleSubmitByUrl} spacing={2} sx={{ maxWidth: 480 }}>
+            <TextField
+              fullWidth
+              label="Newsletter URL"
+              placeholder="https://..."
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              variant="outlined"
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Tooltip title={!urlValid ? 'Enter a valid URL' : ''}>
+              <span style={{ display: 'inline-block' }}>
+                <Button type="submit" variant="contained" disabled={!urlValid}>
+                  Submit
+                </Button>
+              </span>
+            </Tooltip>
+          </Box>
+          </Stack>
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Typography variant="body1" color="text.secondary">
