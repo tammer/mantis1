@@ -54,14 +54,14 @@ export default function NewsletterDetail() {
 
   return (
     <Box sx={{ maxWidth: 720 }}>
-      <MainCard title={payload.title}>
+      <MainCard title={<Typography variant="h3">{payload.title}</Typography>}>
         <Stack spacing={2}>
           <Typography variant="body2" color="text.secondary">
             {payload.date}
           </Typography>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            {payload.short_summary}
-          </Typography>
+        <Typography variant="h5">
+          {payload.short_summary}
+        </Typography>
           <Box sx={{ pt: 1 }}>
             <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
               {payload.long_summary}
