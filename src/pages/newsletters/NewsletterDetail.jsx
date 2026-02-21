@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 // material-ui
+import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -66,6 +67,11 @@ export default function NewsletterDetail() {
             <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
               {payload.long_summary}
             </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2 }}>
+            <Button variant="outlined" size="small" color="inherit" sx={{ textTransform: 'none' }}>
+            Mark as Read
+          </Button>
           </Box>
         </Stack>
       </MainCard>
