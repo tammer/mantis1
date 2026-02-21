@@ -15,8 +15,8 @@ const newsletters = {
   children: [
     {
       id: 'newsletter-one',
-      title: 'Newsletter One',
-      subtitle: 'Latest updates',
+      title: "Aashay's Newsletter",
+      subtitle: 'Aashay Sanghvi',
       type: 'item',
       url: '#',
       icon: icons.MailOutlined
