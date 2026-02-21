@@ -140,21 +140,28 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
           {(drawerOpen || (!drawerOpen && level !== 1)) && (
             <ListItemText
               primary={
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: isSelected ? iconSelectedColor : textColor,
-                    ...(level === 2 && {
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      whiteSpace: 'normal'
-                    })
-                  }}
-                >
-                  {item.title}
-                </Typography>
+                <>
+                  {level === 2 && item.date && (
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.25 }}>
+                      {item.date}
+                    </Typography>
+                  )}
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: isSelected ? iconSelectedColor : textColor,
+                      ...(level === 2 && {
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        whiteSpace: 'normal'
+                      })
+                    }}
+                  >
+                    {item.title}
+                  </Typography>
+                </>
               }
               secondary={
                 item.subtitle ? (
