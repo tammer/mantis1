@@ -8,7 +8,8 @@ import support from './support';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [newsletters, dashboard, pages, utilities, support]
+  // items: [newsletters, dashboard, pages, utilities, support]
+  items: [newsletters]
 };
 
 export default menuItems;
