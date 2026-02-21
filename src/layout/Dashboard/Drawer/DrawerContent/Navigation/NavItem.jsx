@@ -115,6 +115,13 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
                   {item.title}
                 </Typography>
               }
+              secondary={
+                item.subtitle ? (
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+                    {item.subtitle}
+                  </Typography>
+                ) : undefined
+              }
             />
           )}
           {(drawerOpen || (!drawerOpen && level !== 1)) && item.chip && (

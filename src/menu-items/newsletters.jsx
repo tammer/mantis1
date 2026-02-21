@@ -16,6 +16,7 @@ const newsletters = {
     {
       id: 'newsletter-one',
       title: 'Newsletter One',
+      subtitle: 'Latest updates',
       type: 'item',
       url: '#',
       icon: icons.MailOutlined
@@ -23,6 +24,7 @@ const newsletters = {
     {
       id: 'newsletter-two',
       title: 'Newsletter Two',
+      subtitle: 'Weekly digest',
       type: 'item',
       url: '#',
       icon: icons.MailOutlined
@@ -30,6 +32,7 @@ const newsletters = {
     {
       id: 'newsletter-three',
       title: 'Newsletter Three',
+      subtitle: 'Monthly roundup',
       type: 'item',
       url: '#',
       icon: icons.MailOutlined
