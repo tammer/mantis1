@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { Link, useLocation, matchPath } from 'react-router-dom';
 
 // material-ui
@@ -8,6 +9,8 @@ import Chip from '@mui/material/Chip';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
@@ -15,6 +18,9 @@ import Box from '@mui/material/Box';
 import IconButton from 'components/@extended/IconButton';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+
+// assets
+import MoreOutlined from '@ant-design/icons/MoreOutlined';
 
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
 
@@ -55,9 +61,34 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
   const textColor = 'text.primary';
   const iconSelectedColor = 'primary.main';
 
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const menuOpen = Boolean(menuAnchorEl);
+
+  const handleMenuOpen = (event) => {
+    event.stopPropagation();
+    setMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
+
   return (
     <>
-      <Box sx={{ position: 'relative' }}>
+      <Box
+        sx={{
+          position: 'relative',
+          ...(drawerOpen && {
+            '&:hover': { bgcolor: 'primary.lighter' },
+            ...(menuOpen && { bgcolor: 'primary.lighter' }),
+            ...(isSelected && {
+              bgcolor: 'primary.lighter',
+              borderRight: '2px solid',
+              borderColor: 'primary.main'
+            })
+          })
+        }}
+      >
         <ListItemButton
           component={Link}
           to={item.url}
@@ -69,13 +100,11 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
             pl: drawerOpen ? `${level * 28}px` : 1.5,
             py: !drawerOpen && level === 1 ? 1.25 : 1,
             ...(drawerOpen && {
-              '&:hover': { bgcolor: 'primary.lighter' },
+              '&:hover': { bgcolor: 'transparent' },
               '&.Mui-selected': {
-                bgcolor: 'primary.lighter',
-                borderRight: '2px solid',
-                borderColor: 'primary.main',
+                bgcolor: 'transparent',
                 color: iconSelectedColor,
-                '&:hover': { color: iconSelectedColor, bgcolor: 'primary.lighter' }
+                '&:hover': { color: iconSelectedColor, bgcolor: 'transparent' }
               }
             }),
             ...(!drawerOpen && {
@@ -134,6 +163,27 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
             />
           )}
         </ListItemButton>
+        {(drawerOpen || (!drawerOpen && level !== 1)) && (
+          <IconButton
+            size="small"
+            color="secondary"
+            variant="text"
+            onClick={handleMenuOpen}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              right: 8,
+              transform: 'translateY(-50%)',
+              zIndex: 1202,
+              width: 24,
+              height: 24,
+              color: isSelected ? iconSelectedColor : 'text.secondary',
+              '&:hover': { color: isSelected ? iconSelectedColor : 'text.primary' }
+            }}
+          >
+            <MoreOutlined style={{ fontSize: '1rem' }} />
+          </IconButton>
+        )}
         {(drawerOpen || (!drawerOpen && level !== 1)) &&
           item?.actions &&
           item?.actions.map((action, index) => {
@@ -173,6 +223,30 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
               </IconButton>
             );
           })}
+        <Menu
+          anchorEl={menuAnchorEl}
+          open={menuOpen}
+          onClose={handleMenuClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              // stub: delete
+            }}
+          >
+            Delete
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              // stub: refresh
+            }}
+          >
+            Refresh
+          </MenuItem>
+        </Menu>
       </Box>
     </>
   );
