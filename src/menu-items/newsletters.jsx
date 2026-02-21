@@ -18,7 +18,7 @@ const newsletters = {
       title: "Aashay's Newsletter",
       subtitle: 'Aashay Sanghvi',
       type: 'item',
-      url: '#',
+      url: '/example1',
       icon: icons.MailOutlined
     },
     {
