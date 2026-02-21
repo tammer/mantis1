@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 // material-ui
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -14,11 +15,23 @@ import { useGetMenuMaster } from 'api/menu';
 export default function NavGroup({ item }) {
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const [openCollapseId, setOpenCollapseId] = useState(null);
+
+  const handleCollapseToggle = (menuItemId) => {
+    setOpenCollapseId((prev) => (prev === menuItemId ? null : menuItemId));
+  };
 
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {
       case 'collapse':
-        return <NavCollapse key={menuItem.id} item={menuItem} />;
+        return (
+          <NavCollapse
+            key={menuItem.id}
+            item={menuItem}
+            isOpen={openCollapseId === menuItem.id}
+            onToggle={() => handleCollapseToggle(menuItem.id)}
+          />
+        );
       case 'item':
         return <NavItem key={menuItem.id} item={menuItem} level={1} />;
       default:

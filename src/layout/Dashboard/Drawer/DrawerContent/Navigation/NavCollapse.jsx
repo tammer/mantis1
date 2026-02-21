@@ -22,18 +22,17 @@ import RightOutlined from '@ant-design/icons/RightOutlined';
 
 // ==============================|| NAVIGATION - COLLAPSE ||============================== //
 
-export default function NavCollapse({ item }) {
+export default function NavCollapse({ item, isOpen = false, onToggle }) {
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
-  const [open, setOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const menuOpen = Boolean(menuAnchorEl);
 
-  const ExpandIcon = open ? DownOutlined : RightOutlined;
+  const ExpandIcon = isOpen ? DownOutlined : RightOutlined;
 
   const handleToggle = (e) => {
     if (e) e.stopPropagation();
-    setOpen((prev) => !prev);
+    onToggle?.();
   };
 
   const handleMenuOpen = (e) => {
@@ -147,7 +146,7 @@ export default function NavCollapse({ item }) {
           </MenuItem>
         </Menu>
       </Box>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={isOpen} timeout="auto" unmountOnExit>
         <Box component="ul" sx={{ listStyle: 'none', pl: 0, m: 0 }}>
           {item.children?.map(
             (child) =>
@@ -163,4 +162,8 @@ export default function NavCollapse({ item }) {
   );
 }
 
-NavCollapse.propTypes = { item: PropTypes.object };
+NavCollapse.propTypes = {
+  item: PropTypes.object,
+  isOpen: PropTypes.bool,
+  onToggle: PropTypes.func
+};
