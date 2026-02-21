@@ -140,7 +140,19 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
           {(drawerOpen || (!drawerOpen && level !== 1)) && (
             <ListItemText
               primary={
-                <Typography variant="h6" sx={{ color: isSelected ? iconSelectedColor : textColor }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: isSelected ? iconSelectedColor : textColor,
+                    ...(level === 2 && {
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      whiteSpace: 'normal'
+                    })
+                  }}
+                >
                   {item.title}
                 </Typography>
               }
@@ -163,7 +175,7 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
             />
           )}
         </ListItemButton>
-        {(drawerOpen || (!drawerOpen && level !== 1)) && (
+        {(drawerOpen || (!drawerOpen && level !== 1)) && level === 1 && (
           <IconButton
             size="small"
             color="secondary"
@@ -223,30 +235,32 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
               </IconButton>
             );
           })}
-        <Menu
-          anchorEl={menuAnchorEl}
-          open={menuOpen}
-          onClose={handleMenuClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <MenuItem
-            onClick={() => {
-              handleMenuClose();
-              // stub: delete
-            }}
+        {level === 1 && (
+          <Menu
+            anchorEl={menuAnchorEl}
+            open={menuOpen}
+            onClose={handleMenuClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
-            Delete
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              handleMenuClose();
-              // stub: refresh
-            }}
-          >
-            Refresh
-          </MenuItem>
-        </Menu>
+            <MenuItem
+              onClick={() => {
+                handleMenuClose();
+                // stub: delete
+              }}
+            >
+              Delete
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleMenuClose();
+                // stub: refresh
+              }}
+            >
+              Refresh
+            </MenuItem>
+          </Menu>
+        )}
       </Box>
     </>
   );
