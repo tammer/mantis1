@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import ListItemButton from '@mui/material/ListItemButton';
@@ -23,6 +24,7 @@ import RightOutlined from '@ant-design/icons/RightOutlined';
 // ==============================|| NAVIGATION - COLLAPSE ||============================== //
 
 export default function NavCollapse({ item, isOpen = false, onToggle }) {
+  const navigate = useNavigate();
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -33,6 +35,7 @@ export default function NavCollapse({ item, isOpen = false, onToggle }) {
   const handleToggle = (e) => {
     if (e) e.stopPropagation();
     onToggle?.();
+    navigate(`/newsletters/${item.id}`);
   };
 
   const handleMenuOpen = (e) => {

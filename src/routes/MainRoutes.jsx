@@ -15,6 +15,9 @@ const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 
+// render - newsletter detail
+const NewsletterDetail = Loadable(lazy(() => import('pages/newsletters/NewsletterDetail')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -49,6 +52,10 @@ const MainRoutes = {
     {
       path: 'sample-page',
       element: <SamplePage />
+    },
+    {
+      path: 'newsletters/:id',
+      element: <NewsletterDetail />
     }
   ]
 };
