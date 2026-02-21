@@ -81,7 +81,7 @@ export default function NavCollapse({ item, isOpen = false, onToggle }) {
           }}
         >
           <ExpandIcon
-            style={{ fontSize: '0.875rem', flexShrink: 0, marginRight: 4 }}
+            style={{ fontSize: '0.875rem', flexShrink: 0, marginRight: 12 }}
             onClick={(e) => {
               e.stopPropagation();
               handleToggle();
