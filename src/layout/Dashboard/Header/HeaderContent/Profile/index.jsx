@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -20,6 +21,7 @@ import Box from '@mui/material/Box';
 import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
 import Avatar from 'components/@extended/Avatar';
+import { useAuth } from 'contexts/AuthContext';
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
 import IconButton from 'components/@extended/IconButton';
@@ -50,6 +52,8 @@ function a11yProps(index) {
 
 export default function Profile() {
   const theme = useTheme();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -62,6 +66,12 @@ export default function Profile() {
       return;
     }
     setOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    setOpen(false);
+    navigate('/login');
   };
 
   const [value, setValue] = useState(0);
@@ -126,7 +136,7 @@ export default function Profile() {
                       </Grid>
                       <Grid>
                         <Tooltip title="Logout">
-                          <IconButton size="large" sx={{ color: 'text.primary' }}>
+                          <IconButton size="large" sx={{ color: 'text.primary' }} onClick={handleLogout}>
                             <LogoutOutlined />
                           </IconButton>
                         </Tooltip>

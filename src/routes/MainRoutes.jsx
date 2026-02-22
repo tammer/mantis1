@@ -3,6 +3,7 @@ import { lazy } from 'react';
 // project imports
 import Loadable from 'components/Loadable';
 import DashboardLayout from 'layout/Dashboard';
+import ProtectedRoute from 'components/ProtectedRoute';
 
 // render- Dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
@@ -55,12 +56,18 @@ const MainRoutes = {
       element: <SamplePage />
     },
     {
-      path: 'newsletters/add',
-      element: <AddNewsletter />
-    },
-    {
-      path: 'newsletters/:id',
-      element: <NewsletterDetail />
+      path: 'newsletters',
+      element: <ProtectedRoute />,
+      children: [
+        {
+          path: 'add',
+          element: <AddNewsletter />
+        },
+        {
+          path: ':id',
+          element: <NewsletterDetail />
+        }
+      ]
     }
   ]
 };
