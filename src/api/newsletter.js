@@ -129,3 +129,38 @@ export function fetchNewsletterById(id) {
     }, delay);
   });
 }
+
+// ==============================|| NEWSLETTER API - SUBSCRIBE BY URL ||============================== //
+
+const NEWSLETTER_API_BASE = import.meta.env.VITE_APP_NEWSLETTER_API_URL ?? 'http://127.0.0.1:5001';
+
+/**
+ * Submits a newsletter URL to the backend to add a subscription.
+ * @param {string} url - Newsletter URL (will be trimmed)
+ * @param {string} [accessToken] - Optional Supabase session access token for Authorization header
+ * @returns {Promise<{ success: boolean, message: string }>}
+ */
+export async function subscribeNewsletterByUrl(url, accessToken) {
+  const trimmedUrl = url?.trim() ?? '';
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+  try {
+    const res = await fetch(`${NEWSLETTER_API_BASE}/newsletters/subscribe-by-url`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ url: trimmedUrl })
+    });
+    const data = await res.json().catch(() => ({}));
+    const message = data.message ?? 'Request failed';
+    if (res.ok) {
+      return { success: true, message };
+    }
+    return { success: false, message };
+  } catch (err) {
+    return { success: false, message: err?.message ?? 'Subscription failed. Please try again.' };
+  }
+}

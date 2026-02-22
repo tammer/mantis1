@@ -1,7 +1,9 @@
 import { useState } from 'react';
 
 // material-ui
+import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
@@ -12,6 +14,8 @@ import Stack from '@mui/material/Stack';
 
 // project imports
 import MainCard from 'components/MainCard';
+import { subscribeNewsletterByUrl } from 'api/newsletter';
+import { useAuth } from 'contexts/AuthContext';
 
 // ==============================|| ADD NEWSLETTER ||============================== //
 
@@ -24,16 +28,41 @@ function TabPanel({ children, value, index, ...other }) {
 }
 
 export default function AddNewsletter() {
+  const { session } = useAuth();
   const [value, setValue] = useState(0);
   const [url, setUrl] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const handleSubmitByUrl = (e) => {
+  const handleSubmitByUrl = async (e) => {
     e.preventDefault();
-    // TODO: submit URL
+    if (!url?.trim() || submitting) return;
+    setSubmitting(true);
+    try {
+      const accessToken = session?.access_token;
+      const result = await subscribeNewsletterByUrl(url, accessToken);
+      if (result.success) {
+        setSnackbarMessage(result.message || 'Newsletter subscription added.');
+        setSnackbarSeverity('success');
+        setUrl('');
+      } else {
+        setSnackbarMessage(result.message || 'Subscription failed. Please try again.');
+        setSnackbarSeverity('error');
+      }
+      setSnackbarOpen(true);
+    } catch {
+      setSnackbarMessage('Subscription failed. Please try again.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const isValidUrl = (str) => {
@@ -73,8 +102,8 @@ export default function AddNewsletter() {
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Tooltip title={!urlValid ? 'Enter a valid URL' : ''}>
               <span style={{ display: 'inline-block' }}>
-                <Button type="submit" variant="contained" disabled={!urlValid}>
-                  Submit
+                <Button type="submit" variant="contained" disabled={!urlValid || submitting}>
+                  {submitting ? 'Submitting…' : 'Submit'}
                 </Button>
               </span>
             </Tooltip>
@@ -92,6 +121,16 @@ export default function AddNewsletter() {
           </Typography>
         </TabPanel>
       </MainCard>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} variant="filled">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
