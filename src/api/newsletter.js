@@ -138,7 +138,7 @@ const NEWSLETTER_API_BASE = import.meta.env.VITE_APP_NEWSLETTER_API_URL ?? 'http
  * Submits a newsletter URL to the backend to add a subscription.
  * @param {string} url - Newsletter URL (will be trimmed)
  * @param {string} [accessToken] - Optional Supabase session access token for Authorization header
- * @returns {Promise<{ success: boolean, message: string }>}
+ * @returns {Promise<{ success: boolean, message: string, title?: string }>}
  */
 export async function subscribeNewsletterByUrl(url, accessToken) {
   const trimmedUrl = url?.trim() ?? '';
@@ -157,7 +157,7 @@ export async function subscribeNewsletterByUrl(url, accessToken) {
     const data = await res.json().catch(() => ({}));
     const message = data.message ?? 'Request failed';
     if (res.ok) {
-      return { success: true, message };
+      return { success: true, message, title: data.title };
     }
     return { success: false, message };
   } catch (err) {

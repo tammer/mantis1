@@ -3,7 +3,9 @@ import { useState } from 'react';
 // material-ui
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
@@ -32,9 +34,10 @@ export default function AddNewsletter() {
   const [value, setValue] = useState(0);
   const [url, setUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalSeverity, setModalSeverity] = useState('success');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -48,18 +51,21 @@ export default function AddNewsletter() {
       const accessToken = session?.access_token;
       const result = await subscribeNewsletterByUrl(url, accessToken);
       if (result.success) {
-        setSnackbarMessage(result.message || 'Newsletter subscription added.');
-        setSnackbarSeverity('success');
+        setModalMessage(result.message || 'Newsletter subscription added.');
+        setModalTitle(result.title || '');
+        setModalSeverity('success');
         setUrl('');
       } else {
-        setSnackbarMessage(result.message || 'Subscription failed. Please try again.');
-        setSnackbarSeverity('error');
+        setModalMessage(result.message || 'Subscription failed. Please try again.');
+        setModalTitle('');
+        setModalSeverity('error');
       }
-      setSnackbarOpen(true);
+      setModalOpen(true);
     } catch {
-      setSnackbarMessage('Subscription failed. Please try again.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
+      setModalMessage('Subscription failed. Please try again.');
+      setModalTitle('');
+      setModalSeverity('error');
+      setModalOpen(true);
     } finally {
       setSubmitting(false);
     }
@@ -121,16 +127,23 @@ export default function AddNewsletter() {
           </Typography>
         </TabPanel>
       </MainCard>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} variant="filled">
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <Dialog open={modalOpen} onClose={() => setModalOpen(false)} PaperProps={{ sx: { maxWidth: 432, width: '100%' } }}>
+        <DialogContent sx={{ pt: 3 }}>
+          {modalSeverity === 'success' && modalTitle && (
+            <Typography variant="h5" component="p" sx={{ fontWeight: 600, mb: 2 }}>
+              {modalTitle}
+            </Typography>
+          )}
+          <Alert severity={modalSeverity} variant="outlined" sx={{ mt: 0 }}>
+            {modalMessage}
+          </Alert>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setModalOpen(false)} variant="contained" color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
