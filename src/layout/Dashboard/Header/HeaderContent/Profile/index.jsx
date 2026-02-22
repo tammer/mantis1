@@ -52,7 +52,7 @@ function a11yProps(index) {
 
 export default function Profile() {
   const theme = useTheme();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   const anchorRef = useRef(null);
@@ -127,9 +127,9 @@ export default function Profile() {
                         <Stack direction="row" sx={{ gap: 1.25, alignItems: 'center' }}>
                           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                           <Stack>
-                            <Typography variant="h6">John Doe</Typography>
+                            <Typography variant="h6">{user?.email ?? 'User'}</Typography>
                             <Typography variant="body2" color="text.secondary">
-                              UI/UX Designer
+                              Signed in
                             </Typography>
                           </Stack>
                         </Stack>
