@@ -149,7 +149,7 @@ export default function NavCollapse({ item, isOpen = false, onToggle, postsLoadi
           </MenuItem>
         </Menu>
       </Box>
-      <Collapse in={isOpen} timeout="auto" unmountOnExit>
+      <Collapse in={isOpen} timeout={110} unmountOnExit>
         <Box component="ul" sx={{ listStyle: 'none', pl: 0, m: 0 }}>
           {postsLoading && (
             <Box component="li" sx={{ pl: 4, py: 1 }}>
