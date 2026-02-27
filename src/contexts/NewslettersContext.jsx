@@ -33,14 +33,17 @@ function newsletterToMenuItem(nl) {
 
 /**
  * Maps API post to sidebar NavItem shape. Links to post detail route.
+ * Encodes the post URL into the route so the detail page can call /posts/summary.
  */
 function postToMenuItem(post, index, newsletterId) {
-  const id = post.id ?? `post-${newsletterId}-${index}`;
+  const fallbackId = post.id ?? `post-${newsletterId}-${index}`;
+  const rawUrl = post.url ?? '';
+  const routeKey = rawUrl ? encodeURIComponent(rawUrl) : fallbackId;
   return {
-    id,
+    id: routeKey,
     title: post.title,
     type: 'item',
-    url: `/newsletters/${newsletterId}/posts/${id}`,
+    url: `/newsletters/${newsletterId}/posts/${routeKey}`,
     date: post.date,
     read: !!post.read
   };

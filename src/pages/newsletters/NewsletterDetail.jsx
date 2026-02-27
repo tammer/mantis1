@@ -18,7 +18,7 @@ import { fetchPostSummary } from 'api/newsletter';
 
 export default function NewsletterDetail() {
   const { id: newsletterId, postId } = useParams();
-  const { accessToken, loading: newslettersLoading } = useNewsletters();
+  const { accessToken } = useNewsletters();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -30,10 +30,16 @@ export default function NewsletterDetail() {
       setError(null);
       return;
     }
+    let postUrl = postId;
+    try {
+      postUrl = decodeURIComponent(postId);
+    } catch {
+      // ignore, use raw value
+    }
     setLoading(true);
     setError(null);
     setSummary(null);
-    fetchPostSummary(postId, accessToken)
+    fetchPostSummary(postUrl, accessToken)
       .then((data) => {
         setSummary(data);
         setLoading(false);

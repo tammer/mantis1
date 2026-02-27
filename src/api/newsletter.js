@@ -178,16 +178,22 @@ export async function fetchPosts(newsletterUrl, accessToken) {
 
 /**
  * Fetches the summary for a single post (article).
- * @param {string} postId - The post id from the posts list
+ * @param {string} postUrl - The full post/article URL
  * @param {string} [accessToken] - Optional Supabase session access token for Authorization header
  * @returns {Promise<{ id: string, url: string, article_title: string, post_date: string, short_summary: string, full_summary: string }>}
  */
-export async function fetchPostSummary(postId, accessToken) {
-  const headers = {};
+export async function fetchPostSummary(postUrl, accessToken) {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
   if (accessToken) {
     headers.Authorization = `Bearer ${accessToken}`;
   }
-  const res = await fetch(`${NEWSLETTER_API_BASE}/posts/${encodeURIComponent(postId)}/summary`, { headers });
+  const res = await fetch(`${NEWSLETTER_API_BASE}/posts/summary`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ post_url: postUrl })
+  });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const err = new Error(data.error ?? data.message ?? 'Failed to fetch post summary');
