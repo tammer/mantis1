@@ -32,7 +32,7 @@ function newsletterToMenuItem(nl) {
 }
 
 /**
- * Maps API post to sidebar NavItem shape.
+ * Maps API post to sidebar NavItem shape. Links to post detail route.
  */
 function postToMenuItem(post, index, newsletterId) {
   const id = post.id ?? `post-${newsletterId}-${index}`;
@@ -40,7 +40,7 @@ function postToMenuItem(post, index, newsletterId) {
     id,
     title: post.title,
     type: 'item',
-    url: post.url ?? '#',
+    url: `/newsletters/${newsletterId}/posts/${id}`,
     date: post.date,
     read: !!post.read
   };

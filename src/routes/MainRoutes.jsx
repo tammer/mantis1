@@ -66,6 +66,10 @@ const MainRoutes = {
         {
           path: ':id',
           element: <NewsletterDetail />
+        },
+        {
+          path: ':id/posts/:postId',
+          element: <NewsletterDetail />
         }
       ]
     }

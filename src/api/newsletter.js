@@ -177,6 +177,27 @@ export async function fetchPosts(newsletterUrl, accessToken) {
 }
 
 /**
+ * Fetches the summary for a single post (article).
+ * @param {string} postId - The post id from the posts list
+ * @param {string} [accessToken] - Optional Supabase session access token for Authorization header
+ * @returns {Promise<{ id: string, url: string, article_title: string, post_date: string, short_summary: string, full_summary: string }>}
+ */
+export async function fetchPostSummary(postId, accessToken) {
+  const headers = {};
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+  const res = await fetch(`${NEWSLETTER_API_BASE}/posts/${encodeURIComponent(postId)}/summary`, { headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data.error ?? data.message ?? 'Failed to fetch post summary');
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+/**
  * Submits a newsletter URL to the backend to add a subscription.
  * @param {string} url - Newsletter URL (will be trimmed)
  * @param {string} [accessToken] - Optional Supabase session access token for Authorization header
