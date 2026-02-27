@@ -12,7 +12,7 @@ import Box from '@mui/material/Box';
 import MainCard from 'components/MainCard';
 import Loader from 'components/Loader';
 import { useNewsletters } from 'contexts/NewslettersContext';
-import { fetchPostSummary } from 'api/newsletter';
+import { fetchPostSummary, setArticleReadStatus } from 'api/newsletter';
 
 // ==============================|| NEWSLETTER DETAIL (POST SUMMARY) ||============================== //
 
@@ -32,6 +32,8 @@ export default function NewsletterDetail() {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isRead, setIsRead] = useState(false);
+  const [readLoading, setReadLoading] = useState(false);
 
   useEffect(() => {
     if (!postId || !accessToken) {
@@ -52,6 +54,7 @@ export default function NewsletterDetail() {
     fetchPostSummary(postUrl, accessToken)
       .then((data) => {
         setSummary(data);
+        setIsRead(!!data.read);
         setLoading(false);
       })
       .catch((err) => {
@@ -78,6 +81,16 @@ export default function NewsletterDetail() {
 
   const title = summary.article_title ?? summary.title ?? 'Article';
   const postDate = summary.post_date ?? summary.date ?? '';
+  const articleUrl = summary.url ?? '';
+
+  const handleToggleRead = () => {
+    if (!articleUrl || readLoading) return;
+    setReadLoading(true);
+    setArticleReadStatus(articleUrl, !isRead, accessToken)
+      .then(() => setIsRead(!isRead))
+      .catch(() => {})
+      .finally(() => setReadLoading(false));
+  };
 
   return (
     <Box sx={{ maxWidth: 720, mt: 3 }}>
@@ -109,8 +122,15 @@ export default function NewsletterDetail() {
             </Box>
           )}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2 }}>
-            <Button variant="outlined" size="small" color="inherit" sx={{ textTransform: 'none' }}>
-              Mark as Read
+            <Button
+              variant="outlined"
+              size="small"
+              color="inherit"
+              sx={{ textTransform: 'none' }}
+              onClick={handleToggleRead}
+              disabled={!articleUrl || readLoading}
+            >
+              {isRead ? 'Mark unread' : 'Mark as Read'}
             </Button>
           </Box>
         </Stack>

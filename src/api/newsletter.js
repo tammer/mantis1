@@ -204,6 +204,41 @@ export async function fetchPostSummary(postUrl, accessToken) {
 }
 
 /**
+ * Sets the read status for an article (mark read or unread).
+ *
+ * Endpoint spec:
+ *   POST /posts/read
+ *   Body: { post_url: string, read: boolean }  (true = mark as read, false = mark as unread)
+ *   Headers: Content-Type: application/json, Authorization: Bearer <token>
+ *   Success: 200 with optional JSON body (e.g. { ok: true })
+ *   Errors: 401 Unauthorized, 400 if post_url missing
+ *
+ * @param {string} postUrl - The full article URL
+ * @param {boolean} read - true to mark as read, false to mark as unread
+ * @param {string} [accessToken] - Optional Supabase session access token
+ * @returns {Promise<void>}
+ */
+export async function setArticleReadStatus(postUrl, read, accessToken) {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+  const res = await fetch(`${NEWSLETTER_API_BASE}/posts/read`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ post_url: postUrl, read })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data.error ?? data.message ?? 'Failed to update read status');
+    err.status = res.status;
+    throw err;
+  }
+}
+
+/**
  * Submits a newsletter URL to the backend to add a subscription.
  * @param {string} url - Newsletter URL (will be trimmed)
  * @param {string} [accessToken] - Optional Supabase session access token for Authorization header
