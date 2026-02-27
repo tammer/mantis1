@@ -96,11 +96,6 @@ export default function NewsletterDetail() {
               {postDate}
             </Typography>
           )}
-          {summary.url && (
-            <Link href={summary.url} target="_blank" rel="noopener noreferrer" variant="body2">
-              Read full article
-            </Link>
-          )}
           {summary.short_summary && (
             <Typography variant="h5" component="p">
               {summary.short_summary}
@@ -108,8 +103,16 @@ export default function NewsletterDetail() {
           )}
           {summary.full_summary && (
             <Box sx={{ pt: 1 }}>
-              <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+              <Typography variant="body1" component="p" sx={{ whiteSpace: 'pre-line' }}>
                 {summary.full_summary}
+                {summary.url && (
+                  <>
+                    {' '}
+                    <Link href={summary.url} target="_blank" rel="noopener noreferrer" variant="body2">
+                      Full article&raquo;
+                    </Link>
+                  </>
+                )}
               </Typography>
             </Box>
           )}
