@@ -16,6 +16,16 @@ import { fetchPostSummary } from 'api/newsletter';
 
 // ==============================|| NEWSLETTER DETAIL (POST SUMMARY) ||============================== //
 
+function ArticleStateCard({ children, color = 'text.secondary' }) {
+  return (
+    <Box sx={{ maxWidth: 720, mt: 3 }}>
+      <MainCard title="Article">
+        <Typography color={color}>{children}</Typography>
+      </MainCard>
+    </Box>
+  );
+}
+
 export default function NewsletterDetail() {
   const { id: newsletterId, postId } = useParams();
   const { accessToken } = useNewsletters();
@@ -51,35 +61,17 @@ export default function NewsletterDetail() {
   }, [postId, accessToken]);
 
   if (!newsletterId) {
-    return (
-      <Box sx={{ maxWidth: 720 }}>
-        <MainCard title="Article">
-          <Typography color="text.secondary">Select a newsletter and post from the sidebar.</Typography>
-        </MainCard>
-      </Box>
-    );
+    return <ArticleStateCard>Select a newsletter and post from the sidebar.</ArticleStateCard>;
   }
 
   if (!postId) {
-    return (
-      <Box sx={{ maxWidth: 720 }}>
-        <MainCard title="Article">
-          <Typography color="text.secondary">Select a post from the sidebar to view its summary.</Typography>
-        </MainCard>
-      </Box>
-    );
+    return <ArticleStateCard>Select a post from the sidebar to view its summary.</ArticleStateCard>;
   }
 
   if (loading) return <Loader />;
 
   if (error) {
-    return (
-      <Box sx={{ maxWidth: 720 }}>
-        <MainCard title="Article">
-          <Typography color="error">{error}</Typography>
-        </MainCard>
-      </Box>
-    );
+    return <ArticleStateCard color="error">{error}</ArticleStateCard>;
   }
 
   if (!summary) return null;
@@ -88,7 +80,7 @@ export default function NewsletterDetail() {
   const postDate = summary.post_date ?? summary.date ?? '';
 
   return (
-    <Box sx={{ maxWidth: 720 }}>
+    <Box sx={{ maxWidth: 720, mt: 3 }}>
       <MainCard title={<Typography variant="h3">{title}</Typography>}>
         <Stack spacing={2}>
           {postDate && (
