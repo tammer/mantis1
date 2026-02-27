@@ -1,15 +1,38 @@
 // material-ui
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // project import
 import NavGroup from './NavGroup';
-import menuItem from 'menu-items';
+import { useNewsletters } from 'contexts/NewslettersContext';
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
 export default function Navigation() {
-  const navGroups = menuItem.items.map((item) => {
+  const { menuGroup, loading, error } = useNewsletters();
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+        <CircularProgress size={24} />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ px: 2, py: 2 }}>
+        <Typography variant="body2" color="text.secondary">
+          {error}
+        </Typography>
+      </Box>
+    );
+  }
+
+  const items = [menuGroup].filter(Boolean);
+
+  const navGroups = items.map((item) => {
     switch (item.type) {
       case 'group':
         return <NavGroup key={item.id} item={item} />;

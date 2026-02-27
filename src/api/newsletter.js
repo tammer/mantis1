@@ -135,6 +135,48 @@ export function fetchNewsletterById(id) {
 const NEWSLETTER_API_BASE = import.meta.env.VITE_APP_NEWSLETTER_API_URL ?? 'http://127.0.0.1:5001';
 
 /**
+ * Fetches the list of newsletters the user is subscribed to.
+ * @param {string} [accessToken] - Optional Supabase session access token for Authorization header
+ * @returns {Promise<Array<{ title: string, author: string, url: string, id?: string }>>}
+ */
+export async function fetchNewsletters(accessToken) {
+  const headers = {};
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+  const res = await fetch(`${NEWSLETTER_API_BASE}/newsletters`, { headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data.error ?? data.message ?? 'Failed to fetch newsletters');
+    err.status = res.status;
+    throw err;
+  }
+  return data.newsletters ?? [];
+}
+
+/**
+ * Fetches posts for a newsletter by its URL.
+ * @param {string} newsletterUrl - The newsletter url from GET /newsletters
+ * @param {string} [accessToken] - Optional Supabase session access token for Authorization header
+ * @returns {Promise<Array<{ title: string, date: string, read: boolean, id?: string, url?: string }>>}
+ */
+export async function fetchPosts(newsletterUrl, accessToken) {
+  const headers = {};
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+  const params = new URLSearchParams({ newsletter_url: newsletterUrl });
+  const res = await fetch(`${NEWSLETTER_API_BASE}/posts?${params}`, { headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data.error ?? data.message ?? 'Failed to fetch posts');
+    err.status = res.status;
+    throw err;
+  }
+  return data.posts ?? [];
+}
+
+/**
  * Submits a newsletter URL to the backend to add a subscription.
  * @param {string} url - Newsletter URL (will be trimmed)
  * @param {string} [accessToken] - Optional Supabase session access token for Authorization header

@@ -11,6 +11,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Loader from 'components/Loader';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
+import { NewslettersProvider } from 'contexts/NewslettersContext';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 
@@ -28,6 +29,7 @@ export default function DashboardLayout() {
   if (menuMasterLoading) return <Loader />;
 
   return (
+    <NewslettersProvider>
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header />
       <Drawer />
@@ -49,5 +51,6 @@ export default function DashboardLayout() {
         </Box>
       </Box>
     </Box>
+    </NewslettersProvider>
   );
 }

@@ -9,16 +9,23 @@ import Box from '@mui/material/Box';
 import NavItem from './NavItem';
 import NavCollapse from './NavCollapse';
 import { useGetMenuMaster } from 'api/menu';
+import { useNewsletters } from 'contexts/NewslettersContext';
 
 // ==============================|| NAVIGATION - LIST GROUP ||============================== //
 
 export default function NavGroup({ item }) {
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const { loadPosts, postsLoadingByUrl, postsErrorByUrl } = useNewsletters();
   const [openCollapseId, setOpenCollapseId] = useState(null);
 
-  const handleCollapseToggle = (menuItemId) => {
-    setOpenCollapseId((prev) => (prev === menuItemId ? null : menuItemId));
+  const handleCollapseToggle = (menuItemId, menuItem) => {
+    const nextOpen = openCollapseId === menuItemId ? null : menuItemId;
+    setOpenCollapseId(nextOpen);
+    const apiUrl = menuItem?.newsletterUrl ?? menuItem?.url;
+    if (nextOpen && apiUrl && (!menuItem.children || menuItem.children.length === 0)) {
+      loadPosts(apiUrl);
+    }
   };
 
   const navCollapse = item.children?.map((menuItem) => {
@@ -29,7 +36,9 @@ export default function NavGroup({ item }) {
             key={menuItem.id}
             item={menuItem}
             isOpen={openCollapseId === menuItem.id}
-            onToggle={() => handleCollapseToggle(menuItem.id)}
+            onToggle={() => handleCollapseToggle(menuItem.id, menuItem)}
+            postsLoading={menuItem.newsletterUrl ? postsLoadingByUrl[menuItem.newsletterUrl] : false}
+            postsError={menuItem.newsletterUrl ? postsErrorByUrl[menuItem.newsletterUrl] : null}
           />
         );
       case 'item':

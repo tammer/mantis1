@@ -11,7 +11,7 @@ import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
 
 // project imports
 import MainCard from 'components/MainCard';
-import navigation from 'menu-items';
+import { useNewsletters } from 'contexts/NewslettersContext';
 
 // assets
 import ApartmentOutlined from '@ant-design/icons/ApartmentOutlined';
@@ -39,6 +39,8 @@ export default function Breadcrumbs({
 
   const [main, setMain] = useState();
   const [item, setItem] = useState();
+  const { menuGroup } = useNewsletters();
+  const navigation = { items: menuGroup ? [menuGroup] : [] };
 
   const iconSX = {
     marginRight: theme.spacing(0.75),

@@ -23,7 +23,7 @@ import RightOutlined from '@ant-design/icons/RightOutlined';
 
 // ==============================|| NAVIGATION - COLLAPSE ||============================== //
 
-export default function NavCollapse({ item, isOpen = false, onToggle }) {
+export default function NavCollapse({ item, isOpen = false, onToggle, postsLoading = false, postsError = null }) {
   const navigate = useNavigate();
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
@@ -151,14 +151,29 @@ export default function NavCollapse({ item, isOpen = false, onToggle }) {
       </Box>
       <Collapse in={isOpen} timeout="auto" unmountOnExit>
         <Box component="ul" sx={{ listStyle: 'none', pl: 0, m: 0 }}>
-          {item.children?.map(
-            (child) =>
-              child.type === 'item' && (
-                <Box component="li" key={child.id}>
-                  <NavItem item={child} level={2} />
-                </Box>
-              )
+          {postsLoading && (
+            <Box component="li" sx={{ pl: 4, py: 1 }}>
+              <Typography variant="caption" color="text.secondary">
+                Loading…
+              </Typography>
+            </Box>
           )}
+          {postsError && !postsLoading && (
+            <Box component="li" sx={{ pl: 4, py: 1 }}>
+              <Typography variant="caption" color="error">
+                {postsError}
+              </Typography>
+            </Box>
+          )}
+          {!postsLoading &&
+            item.children?.map(
+              (child) =>
+                child.type === 'item' && (
+                  <Box component="li" key={child.id}>
+                    <NavItem item={child} level={2} />
+                  </Box>
+                )
+            )}
         </Box>
       </Collapse>
     </>
@@ -168,5 +183,7 @@ export default function NavCollapse({ item, isOpen = false, onToggle }) {
 NavCollapse.propTypes = {
   item: PropTypes.object,
   isOpen: PropTypes.bool,
-  onToggle: PropTypes.func
+  onToggle: PropTypes.func,
+  postsLoading: PropTypes.bool,
+  postsError: PropTypes.string
 };

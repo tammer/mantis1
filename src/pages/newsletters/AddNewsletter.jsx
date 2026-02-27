@@ -18,6 +18,7 @@ import Stack from '@mui/material/Stack';
 import MainCard from 'components/MainCard';
 import { subscribeNewsletterByUrl } from 'api/newsletter';
 import { useAuth } from 'contexts/AuthContext';
+import { useNewsletters } from 'contexts/NewslettersContext';
 
 // ==============================|| ADD NEWSLETTER ||============================== //
 
@@ -31,6 +32,7 @@ function TabPanel({ children, value, index, ...other }) {
 
 export default function AddNewsletter() {
   const { session } = useAuth();
+  const { refetchNewsletters } = useNewsletters();
   const [value, setValue] = useState(0);
   const [url, setUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -55,6 +57,7 @@ export default function AddNewsletter() {
         setModalTitle(result.title || '');
         setModalSeverity('success');
         setUrl('');
+        refetchNewsletters().catch(() => {});
       } else {
         setModalMessage(result.message || 'Subscription failed. Please try again.');
         setModalTitle('');

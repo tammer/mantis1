@@ -155,7 +155,8 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
-                        whiteSpace: 'normal'
+                        whiteSpace: 'normal',
+                        ...(item.read === false && { fontWeight: 600 })
                       })
                     }}
                   >
