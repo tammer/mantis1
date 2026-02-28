@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // material-ui
 import Button from '@mui/material/Button';
@@ -28,7 +28,8 @@ function ArticleStateCard({ children, color = 'text.secondary' }) {
 
 export default function NewsletterDetail() {
   const { id: newsletterId, postId } = useParams();
-  const { accessToken, setPostReadStatus, getPostReadStatus } = useNewsletters();
+  const navigate = useNavigate();
+  const { accessToken, setPostReadStatus, getPostReadStatus, menuGroup } = useNewsletters();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -89,11 +90,21 @@ export default function NewsletterDetail() {
   const handleToggleRead = () => {
     if (!articleUrl || readLoading) return;
     const newRead = !isRead;
+    let nextUnread;
+    if (newRead) {
+      const newsletter = menuGroup?.children?.find((c) => c.id === newsletterId);
+      const posts = newsletter?.children ?? [];
+      nextUnread = posts.find((p) => !p.read && p.postUrl !== articleUrl);
+    }
     setReadLoading(true);
     setArticleReadStatus(articleUrl, newRead, accessToken)
       .then(() => {
         setIsRead(newRead);
         setPostReadStatus(articleUrl, newRead);
+        if (newRead) {
+          if (nextUnread) navigate(nextUnread.url);
+          else navigate(`/newsletters/${newsletterId}`);
+        }
       })
       .catch(() => {})
       .finally(() => setReadLoading(false));
