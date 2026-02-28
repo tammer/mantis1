@@ -85,6 +85,12 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
               bgcolor: 'primary.lighter',
               borderRight: '2px solid',
               borderColor: 'primary.main'
+            }),
+            // Unread article: accent bar for stronger contrast
+            ...(level === 2 && item.read === false && {
+              borderLeft: '3px solid',
+              borderColor: 'primary.main',
+              ml: 0.5
             })
           })
         }}
@@ -149,14 +155,24 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
                   <Typography
                     variant="h6"
                     sx={{
-                      color: isSelected ? iconSelectedColor : textColor,
+                      color: isSelected
+                        ? iconSelectedColor
+                        : level === 2 && item.read !== false
+                          ? 'text.secondary'
+                          : textColor,
                       ...(level === 2 && {
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
                         whiteSpace: 'normal',
-                        ...(item.read === false && { fontWeight: 600 })
+                        fontWeight: item.read === false ? 700 : 400,
+                        ...(item.read === false && {
+                          opacity: 1
+                        }),
+                        ...(item.read !== false && {
+                          opacity: 0.85
+                        })
                       })
                     }}
                   >
