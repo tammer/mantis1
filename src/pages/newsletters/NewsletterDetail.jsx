@@ -136,11 +136,11 @@ export default function NewsletterDetail() {
               </Typography>
             </Box>
           )}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2, ...(isRead && { color: 'text.primary' }) }}>
             <Button
               variant="outlined"
               size="small"
-              color="inherit"
+              color={isRead ? 'primary' : 'inherit'}
               sx={{ textTransform: 'none' }}
               onClick={handleToggleRead}
               disabled={!articleUrl || readLoading}
