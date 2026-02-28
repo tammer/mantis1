@@ -99,10 +99,18 @@ export default function NewsletterDetail() {
       .finally(() => setReadLoading(false));
   };
 
+  const readColor = isRead ? 'text.secondary' : undefined;
+
   return (
     <Box sx={{ maxWidth: 720, mt: 3 }}>
-      <MainCard title={<Typography variant="h3">{title}</Typography>}>
-        <Stack spacing={2}>
+      <MainCard
+        title={
+          <Typography variant="h3" color={readColor}>
+            {title}
+          </Typography>
+        }
+      >
+        <Stack spacing={2} sx={isRead ? { color: 'text.secondary' } : undefined}>
           {postDate && (
             <Typography variant="body2" color="text.secondary">
               {postDate}
