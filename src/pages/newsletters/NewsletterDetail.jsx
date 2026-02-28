@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 // material-ui
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -10,7 +11,6 @@ import Box from '@mui/material/Box';
 
 // project imports
 import MainCard from 'components/MainCard';
-import Loader from 'components/Loader';
 import { useNewsletters } from 'contexts/NewslettersContext';
 import { fetchPostSummary, setArticleReadStatus } from 'api/newsletter';
 
@@ -75,7 +75,20 @@ export default function NewsletterDetail() {
     return <ArticleStateCard>Select a post from the sidebar to view its summary.</ArticleStateCard>;
   }
 
-  if (loading) return <Loader />;
+  if (loading) {
+    return (
+      <Box sx={{ maxWidth: 720, mt: 3 }}>
+        <MainCard title="Article">
+          <Stack alignItems="center" spacing={2} sx={{ py: 4 }}>
+            <CircularProgress size={40} />
+            <Typography variant="body2" color="text.secondary">
+              Loading article…
+            </Typography>
+          </Stack>
+        </MainCard>
+      </Box>
+    );
+  }
 
   if (error) {
     return <ArticleStateCard color="error">{error}</ArticleStateCard>;
@@ -86,6 +99,34 @@ export default function NewsletterDetail() {
   const title = summary.article_title ?? summary.title ?? 'Article';
   const postDate = summary.post_date ?? summary.date ?? '';
   const articleUrl = summary.url ?? '';
+
+  const getPostUrl = () => {
+    if (summary?.url) return summary.url;
+    try {
+      return postId ? decodeURIComponent(postId) : '';
+    } catch {
+      return postId ?? '';
+    }
+  };
+
+  const handleRefresh = () => {
+    const postUrl = getPostUrl();
+    if (!postUrl || !accessToken || loading) return;
+    setLoading(true);
+    setError(null);
+    fetchPostSummary(postUrl, accessToken)
+      .then((data) => {
+        setSummary(data);
+        const url = data.url ?? postUrl;
+        const readFromApi = data.read;
+        const readFromSidebar = getPostReadStatus(url);
+        setIsRead(readFromApi !== undefined ? !!readFromApi : !!readFromSidebar);
+      })
+      .catch((err) => {
+        setError(err?.message ?? 'Failed to refresh article.');
+      })
+      .finally(() => setLoading(false));
+  };
 
   const handleToggleRead = () => {
     if (!articleUrl || readLoading) return;
@@ -147,7 +188,17 @@ export default function NewsletterDetail() {
               </Typography>
             </Box>
           )}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2, ...(isRead && { color: 'text.primary' }) }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, pt: 2, ...(isRead && { color: 'text.primary' }) }}>
+            <Button
+              variant="outlined"
+              size="small"
+              color="inherit"
+              sx={{ textTransform: 'none' }}
+              onClick={handleRefresh}
+              disabled={loading}
+            >
+              Refresh
+            </Button>
             <Button
               variant="outlined"
               size="small"
