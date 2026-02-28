@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 // project imports
 import { fetchNewsletters, fetchPosts } from 'api/newsletter';
@@ -71,6 +71,7 @@ export function NewslettersProvider({ children }) {
   const [postsByUrl, setPostsByUrl] = useState({});
   const [postsLoadingByUrl, setPostsLoadingByUrl] = useState({});
   const [postsErrorByUrl, setPostsErrorByUrl] = useState({});
+  const backgroundLoadStartedRef = useRef(false);
 
   const fetchNewslettersList = useCallback(() => {
     if (!accessToken) return Promise.resolve([]);
@@ -98,6 +99,22 @@ export function NewslettersProvider({ children }) {
     }
     fetchNewslettersList();
   }, [accessToken, fetchNewslettersList]);
+
+  useEffect(() => {
+    if (!accessToken || !newslettersList.length || backgroundLoadStartedRef.current) return;
+    backgroundLoadStartedRef.current = true;
+    let cancelled = false;
+    (async () => {
+      for (const nl of newslettersList) {
+        if (cancelled) break;
+        await loadPosts(nl.url);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once when newsletters load; omit loadPosts to avoid re-running when postsByUrl updates
+  }, [accessToken, newslettersList]);
 
   const loadPosts = useCallback(
     async (newsletterUrl) => {
