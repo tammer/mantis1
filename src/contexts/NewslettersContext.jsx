@@ -45,7 +45,8 @@ function postToMenuItem(post, index, newsletterId) {
     type: 'item',
     url: `/newsletters/${newsletterId}/posts/${routeKey}`,
     date: post.date,
-    read: !!post.read
+    read: !!post.read,
+    postUrl: rawUrl || undefined
   };
 }
 
@@ -125,6 +126,23 @@ export function NewslettersProvider({ children }) {
     [newslettersList]
   );
 
+  const setPostReadStatus = useCallback((postUrl, read) => {
+    if (!postUrl) return;
+    setPostsByUrl((prev) => {
+      const next = { ...prev };
+      for (const nl of newslettersList) {
+        const children = next[nl.url];
+        if (!children) continue;
+        const idx = children.findIndex((c) => c.postUrl === postUrl);
+        if (idx >= 0) {
+          next[nl.url] = children.map((c, i) => (i === idx ? { ...c, read } : c));
+          break;
+        }
+      }
+      return next;
+    });
+  }, [newslettersList]);
+
   const menuGroup = {
     id: 'newsletters',
     title: 'Newsletters',
@@ -146,6 +164,7 @@ export function NewslettersProvider({ children }) {
     postsLoadingByUrl,
     postsErrorByUrl,
     getNewsletterById,
+    setPostReadStatus,
     accessToken,
     refetchNewsletters: fetchNewslettersList
   };

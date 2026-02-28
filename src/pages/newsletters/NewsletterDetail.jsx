@@ -28,7 +28,7 @@ function ArticleStateCard({ children, color = 'text.secondary' }) {
 
 export default function NewsletterDetail() {
   const { id: newsletterId, postId } = useParams();
-  const { accessToken } = useNewsletters();
+  const { accessToken, setPostReadStatus } = useNewsletters();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -85,9 +85,13 @@ export default function NewsletterDetail() {
 
   const handleToggleRead = () => {
     if (!articleUrl || readLoading) return;
+    const newRead = !isRead;
     setReadLoading(true);
-    setArticleReadStatus(articleUrl, !isRead, accessToken)
-      .then(() => setIsRead(!isRead))
+    setArticleReadStatus(articleUrl, newRead, accessToken)
+      .then(() => {
+        setIsRead(newRead);
+        setPostReadStatus(articleUrl, newRead);
+      })
       .catch(() => {})
       .finally(() => setReadLoading(false));
   };
