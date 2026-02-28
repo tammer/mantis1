@@ -31,6 +31,7 @@ export default function NavCollapse({ item, isOpen = false, onToggle, postsLoadi
   const menuOpen = Boolean(menuAnchorEl);
 
   const ExpandIcon = isOpen ? DownOutlined : RightOutlined;
+  const unreadCount = item.children?.filter((c) => !c.read).length ?? 0;
 
   const handleToggle = (e) => {
     if (e) e.stopPropagation();
@@ -94,6 +95,7 @@ export default function NavCollapse({ item, isOpen = false, onToggle, postsLoadi
             primary={
               <Typography variant="h6" sx={{ color: 'text.primary' }}>
                 {item.title}
+                {unreadCount > 0 ? ` (${unreadCount})` : ''}
               </Typography>
             }
             secondary={
