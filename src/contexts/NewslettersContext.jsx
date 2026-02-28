@@ -50,6 +50,17 @@ function postToMenuItem(post, index, newsletterId) {
   };
 }
 
+/** Sort posts: unread first, then by date newest first */
+function sortPostsByUnreadThenDate(items) {
+  return [...items].sort((a, b) => {
+    const unreadFirst = (a.read ? 1 : 0) - (b.read ? 1 : 0);
+    if (unreadFirst !== 0) return unreadFirst;
+    const dateA = a.date ?? '';
+    const dateB = b.date ?? '';
+    return dateB.localeCompare(dateA);
+  });
+}
+
 export function NewslettersProvider({ children }) {
   const { session } = useAuth();
   const accessToken = session?.access_token ?? null;
@@ -98,7 +109,7 @@ export function NewslettersProvider({ children }) {
         const posts = await fetchPosts(newsletterUrl, accessToken);
         const newsletter = newslettersList.find((nl) => nl.url === newsletterUrl);
         const id = newsletter?.id ?? encodeURIComponent(newsletterUrl);
-        const children = posts.map((p, i) => postToMenuItem(p, i, id));
+        const children = sortPostsByUnreadThenDate(posts.map((p, i) => postToMenuItem(p, i, id)));
         setPostsByUrl((prev) => ({ ...prev, [newsletterUrl]: children }));
       } catch (err) {
         setPostsErrorByUrl((prev) => ({
@@ -164,7 +175,7 @@ export function NewslettersProvider({ children }) {
     children: newslettersList.map((nl) => {
       const menuItem = newsletterToMenuItem(nl);
       const loaded = postsByUrl[nl.url];
-      menuItem.children = loaded ?? [];
+      menuItem.children = loaded ? sortPostsByUnreadThenDate(loaded) : [];
       return menuItem;
     })
   };
