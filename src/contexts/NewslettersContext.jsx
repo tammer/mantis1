@@ -126,6 +126,20 @@ export function NewslettersProvider({ children }) {
     [newslettersList]
   );
 
+  const getPostReadStatus = useCallback(
+    (postUrl) => {
+      if (!postUrl) return undefined;
+      for (const nl of newslettersList) {
+        const children = postsByUrl[nl.url];
+        if (!children) continue;
+        const post = children.find((c) => c.postUrl === postUrl);
+        if (post) return post.read;
+      }
+      return undefined;
+    },
+    [newslettersList, postsByUrl]
+  );
+
   const setPostReadStatus = useCallback((postUrl, read) => {
     if (!postUrl) return;
     setPostsByUrl((prev) => {
@@ -164,6 +178,7 @@ export function NewslettersProvider({ children }) {
     postsLoadingByUrl,
     postsErrorByUrl,
     getNewsletterById,
+    getPostReadStatus,
     setPostReadStatus,
     accessToken,
     refetchNewsletters: fetchNewslettersList

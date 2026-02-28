@@ -28,7 +28,7 @@ function ArticleStateCard({ children, color = 'text.secondary' }) {
 
 export default function NewsletterDetail() {
   const { id: newsletterId, postId } = useParams();
-  const { accessToken, setPostReadStatus } = useNewsletters();
+  const { accessToken, setPostReadStatus, getPostReadStatus } = useNewsletters();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -54,7 +54,10 @@ export default function NewsletterDetail() {
     fetchPostSummary(postUrl, accessToken)
       .then((data) => {
         setSummary(data);
-        setIsRead(!!data.read);
+        const url = data.url ?? postUrl;
+        const readFromApi = data.read;
+        const readFromSidebar = getPostReadStatus(url);
+        setIsRead(readFromApi !== undefined ? !!readFromApi : !!readFromSidebar);
         setLoading(false);
       })
       .catch((err) => {
