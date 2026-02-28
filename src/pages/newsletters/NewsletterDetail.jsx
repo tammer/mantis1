@@ -100,34 +100,6 @@ export default function NewsletterDetail() {
   const postDate = summary.post_date ?? summary.date ?? '';
   const articleUrl = summary.url ?? '';
 
-  const getPostUrl = () => {
-    if (summary?.url) return summary.url;
-    try {
-      return postId ? decodeURIComponent(postId) : '';
-    } catch {
-      return postId ?? '';
-    }
-  };
-
-  const handleRefresh = () => {
-    const postUrl = getPostUrl();
-    if (!postUrl || !accessToken || loading) return;
-    setLoading(true);
-    setError(null);
-    fetchPostSummary(postUrl, accessToken)
-      .then((data) => {
-        setSummary(data);
-        const url = data.url ?? postUrl;
-        const readFromApi = data.read;
-        const readFromSidebar = getPostReadStatus(url);
-        setIsRead(readFromApi !== undefined ? !!readFromApi : !!readFromSidebar);
-      })
-      .catch((err) => {
-        setError(err?.message ?? 'Failed to refresh article.');
-      })
-      .finally(() => setLoading(false));
-  };
-
   const handleToggleRead = () => {
     if (!articleUrl || readLoading) return;
     const newRead = !isRead;
@@ -188,17 +160,7 @@ export default function NewsletterDetail() {
               </Typography>
             </Box>
           )}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, pt: 2, ...(isRead && { color: 'text.primary' }) }}>
-            <Button
-              variant="outlined"
-              size="small"
-              color="inherit"
-              sx={{ textTransform: 'none' }}
-              onClick={handleRefresh}
-              disabled={loading}
-            >
-              Refresh
-            </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2, ...(isRead && { color: 'text.primary' }) }}>
             <Button
               variant="outlined"
               size="small"
